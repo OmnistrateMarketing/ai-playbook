@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omnistrate AI Playbook</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for Browser JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* Smooth fade in for elements */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Specialized Print Styles */
+        @media print {
+            .no-print, 
+            button, 
+            .scroll-buttons, 
+            .floating-lab-btn { 
+                display: none !important; 
+            }
+            body { 
+                background: white !important; 
+                color: black !important; 
+            }
+            header { 
+                position: static !important; 
+                background: white !important; 
+                color: black !important; 
+                border-bottom: 2px solid #000 !important;
+                padding: 1rem 0 !important;
+            }
+            header span, header i { 
+                color: black !important; 
+            }
+            .overflow-x-auto { 
+                display: block !important; 
+                overflow: visible !important; 
+            }
+            .flex.gap-8 { 
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 2rem !important;
+            }
+            .flex-shrink-0 { 
+                flex-shrink: 1 !important;
+                width: 100% !important; 
+                page-break-inside: avoid !important;
+                margin-bottom: 1rem !important;
+            }
+            .grid { 
+                display: block !important; 
+            }
+            .grid > div { 
+                margin-bottom: 2rem !important; 
+                page-break-inside: avoid !important; 
+            }
+            .bg-\[\#1a1a1a\] { 
+                background: #f8fafc !important; 
+                color: black !important; 
+                border: 1px solid #e2e8f0 !important; 
+                box-shadow: none !important;
+            }
+            .bg-\[\#1a1a1a\] p, 
+            .bg-\[\#1a1a1a\] h2, 
+            .bg-\[\#1a1a1a\] h4 { 
+                color: black !important; 
+            }
+            .bg-white\/5 { 
+                background: white !important; 
+                border: 1px solid #cbd5e1 !important; 
+            }
+            .shadow-lg, .shadow-2xl, .shadow-sm { 
+                box-shadow: none !important; 
+            }
+            .rounded-\[3rem\], .rounded-\[2\.5rem\] { 
+                border-radius: 1rem !important; 
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const LucideIcon = ({ name, className, style }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} className={className} style={style}></i>;
+        };
+
+        const App = () => {
+            const [activeStep, setActiveStep] = useState(null);
+            const scrollRef = useRef(null);
+            const primaryColor = '#38b603';
+
+            const objectives = [
+                { title: "Hand off the boring stuff", desc: "Use AI for the repetitive tasks so you can focus on the fun, creative parts of your job.", icon: "coffee" },
+                { title: "Get hours back", desc: "Stop grinding through manual work. Let intelligent tools help you cross things off your list faster.", icon: "zap" },
+                { title: "Supercharge your output", desc: "Think of AI as a superpower that lets one person do the work of a whole squad.", icon: "rocket" },
+                { title: "Precision, Not Just Speed", desc: "Speed is a trap if quality slips. We use AI to accelerate work, but use human expertise to ensure results are accurate and brand-safe.", icon: "shield-check" }
+            ];
+
+            const phases = [
+                { name: "Sandbox Mode", detail: "Just start experimenting! Try using AI in your own daily work to see what sticks." },
+                { name: "Slack & Tell", detail: "Found a cool tool? Pop it into the #AI Stories channel on Slack so we can all check it out." },
+                { name: "Status Sharing", detail: "Bring your best AI experiments to our Monday status meeting to show the team." },
+                { name: "Standardizing", detail: "Let's take the stuff that actually works and make it part of how we do things." }
+            ];
+
+            const processSteps = [
+                { id: 1, title: "The 'Truth' check", icon: "search", category: "Preparation", description: "Before you start, make sure the 'knowledge' you're feeding the AI is actually correct and true.", details: ["Ask yourself: Is my source material accurate?", "If you provide bad 'knowledge', you'll get a bad result.", "Assess potential 'hallucination' risks early on."] },
+                { id: 2, title: "Gemini first", icon: "shield", category: "Preparation", description: "Gemini is our primary tool and it's private to Omnistrate. Keep it safe and secure.", details: ["Gemini is our secure, private 'sandbox'.", "Be extremely careful with sensitive data in 'other models'.", "When in doubt, use Gemini for company-specific tasks."] },
+                { id: 3, title: "The 'Priming' phase", icon: "message-square", category: "Execution", description: "Set the stage with clear 'system instructions'. Define the persona and tone before the main ask.", details: ["Assign a specific role (e.g., 'Senior Cloud Architect').", "Establish clear 'Rules of Engagement' for the AI.", "Tell it exactly how to format the response."] },
+                { id: 4, title: "Golden Samples", icon: "library", category: "Execution", description: "Show, don't just tell. Paste 3 examples of 'perfect' output to prime the AI.", details: ["Use real 'perfect' code or high-performing blog posts.", "This is 'few-shot' prompting—showing the AI what 'Great' looks like.", "Instruct the AI: 'Follow this exact style and structure.'"] },
+                { id: 5, title: "The Prompt", icon: "zap", category: "Execution", description: "This is your core request. Keep it clear, simple, and tell it exactly what you want.", details: ["Use active verbs and keep it declarative.", "Negative constraints are your friend—tell it what NOT to do.", "Stick to one primary objective per prompt."] },
+                { id: 6, title: "Chain of Thought", icon: "iteration-ccw", category: "Execution", description: "For complex work, break it down. Ask the AI to 'think step-by-step' to show its logic.", details: ["Chain prompts together to handle big reasoning tasks.", "Pass output from Step A as the context for Step B.", "Keep the 'logic sequence' tight and focused."] },
+                { id: 7, title: "Cross-check the logic", icon: "check-circle", category: "QC & Validation", description: "Don't just take its word for it. Validate the reasoning against 'other models' if needed.", details: ["See if 'other models' reach the same consensus.", "Reminder: Never put sensitive data into models outside Gemini.", "Choose the right tool for specific technical sub-tasks."] },
+                { id: 8, title: "The Reverse Check", icon: "refresh-cw", category: "QC & Validation", description: "Take the AI's response and ask it to reconstruct your original request to check for 'drift'.", details: ["Did it miss any of your initial requirements?", "Check for logical consistency across the thread.", "Ensure the output stayed true to the original 'knowledge'."] },
+                { id: 9, title: "Build the Library", icon: "book-open", category: "Lifecycle", description: "We treat 'prompt engineering' as code. If it works, save it for the rest of the team.", details: ["Log your successful prompt/response pairs.", "Turn common team tasks into repeatable templates.", "Document the 'why' behind specific prompt tweaks."] },
+                { id: 10, title: "Final Human QC", icon: "shield-check", category: "Lifecycle", description: "Think of AI as a 'Smart Junior'. You are the Senior Lead who signs off on the final result.", details: ["Perform deep Quality Control on every output.", "Double-check facts, citations, and technical logic.", "Uphold the Omnistrate quality standard above all else."] }
+            ];
+
+            const handleScroll = (direction) => {
+                if (scrollRef.current) {
+                    const scrollAmount = direction === 'left' ? -400 : 400;
+                    scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                }
+            };
+
+            const handleDownloadPDF = () => {
+                window.print();
+            };
+
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-green-100 flex flex-col">
+                    <header className="sticky top-0 z-50 bg-[#1a1a1a] border-b border-white/10 px-6 py-4 flex justify-between items-center shadow-lg">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded bg-green-500 flex items-center justify-center">
+                                <LucideIcon name="rocket" className="text-white w-5 h-5" />
+                            </div>
+                            <span className="text-white font-bold text-lg tracking-tight">Omnistrate</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={handleDownloadPDF}
+                                className="no-print hidden md:flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-white/10 active:scale-95"
+                            >
+                                <LucideIcon name="download" className="w-4 h-4" />
+                                Download PDF
+                            </button>
+                            <div className="hidden lg:block text-white/60 text-[10px] font-black tracking-widest uppercase">
+                                AI Playbook v1.3
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-grow">
+                        {/* Hero Section */}
+                        <section className="px-6 py-20 max-w-7xl mx-auto fade-in">
+                            <div className="mb-16">
+                                <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                                    Supercharging <br />
+                                    <span style={{ color: primaryColor }}>How We Work at Omnistrate</span>
+                                </h1>
+                                <p className="text-xl text-slate-500 max-w-2xl leading-relaxed">
+                                    Our interactive guide for building better, faster, and smarter.
+                                </p>
+                            </div>
+
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+                                {objectives.map((obj, i) => (
+                                    <div key={i} className="p-8 rounded-3xl border border-slate-200 bg-white hover:shadow-2xl transition-all duration-500 group">
+                                        <div 
+                                            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 group-hover:rotate-3"
+                                            style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}
+                                        >
+                                            <LucideIcon name={obj.icon} className="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-3">{obj.title}</h3>
+                                        <p className="text-slate-600 text-sm leading-relaxed">{obj.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* AI Lifecycle Section */}
+                        <section className="bg-white py-24 overflow-hidden border-y border-slate-200">
+                            <div className="px-6 mb-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                                <div>
+                                    <h2 className="text-4xl font-bold mb-3 tracking-tight">The AI Lifecycle</h2>
+                                    <p className="text-slate-500 text-lg">A simple workflow from verifying "knowledge" to final QC.</p>
+                                </div>
+                                <div className="flex gap-3 scroll-buttons">
+                                    <button onClick={() => handleScroll('left')} className="p-3 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:scale-110 transition-all shadow-sm active:scale-95">
+                                        <LucideIcon name="arrow-left" className="w-6 h-6" />
+                                    </button>
+                                    <button onClick={() => handleScroll('right')} className="p-3 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:scale-110 transition-all shadow-sm active:scale-95">
+                                        <LucideIcon name="arrow-right" className="w-6 h-6" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div ref={scrollRef} className="flex gap-8 px-6 md:px-24 pb-12 pt-16 overflow-x-auto no-scrollbar snap-x cursor-grab active:cursor-grabbing">
+                                {processSteps.map((step, index) => (
+                                    <div key={step.id} className="flex-shrink-0 w-[340px] snap-center" onMouseEnter={() => setActiveStep(step.id)} onMouseLeave={() => setActiveStep(null)}>
+                                        <div className={`h-full bg-slate-50 rounded-[2.5rem] p-10 mt-6 border-2 transition-all duration-500 relative flex flex-col ${activeStep === step.id ? 'border-green-500 bg-white shadow-2xl -translate-y-4 scale-[1.02]' : 'border-transparent shadow-sm'}`}>
+                                            <div className="absolute -top-8 -left-4 w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl rotate-[-5deg]" style={{ backgroundColor: primaryColor }}>
+                                                {step.id}
+                                            </div>
+                                            <div className="mb-8 flex justify-between items-start">
+                                                <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-500 ${activeStep === step.id ? 'rotate-[360deg] shadow-lg' : ''}`} style={{ backgroundColor: activeStep === step.id ? primaryColor : 'white', color: activeStep === step.id ? 'white' : primaryColor }}>
+                                                    <LucideIcon name={step.icon} className="w-8 h-8" />
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 bg-slate-200/50 px-3 py-1.5 rounded-full">
+                                                    {step.category}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-2xl font-extrabold mb-4 leading-tight">{step.title}</h3>
+                                            <p className="text-slate-500 text-sm leading-relaxed mb-8 flex-grow">{step.description}</p>
+                                            <div className={`space-y-4 transition-all duration-500 ${activeStep === step.id ? 'opacity-100 translate-y-0' : 'opacity-40 translate-y-2'}`}>
+                                                {step.details.map((detail, dIdx) => (
+                                                    <div key={dIdx} className="flex gap-4 text-xs font-semibold text-slate-700 items-start">
+                                                        <div className="w-2 h-2 rounded-full mt-1 shrink-0 shadow-sm" style={{ backgroundColor: primaryColor }}></div>
+                                                        <span className="leading-normal">{detail}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="flex-shrink-0 w-24 h-1"></div>
+                            </div>
+                        </section>
+
+                        {/* Roadmap to Scale Section */}
+                        <section className="px-6 py-20 max-w-7xl mx-auto fade-in">
+                            <div className="mb-12">
+                                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                                    <LucideIcon name="map" className="w-6 h-6" style={{ color: primaryColor }} />
+                                    Roadmap to Scale
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {phases.map((phase, i) => (
+                                        <div key={i} className="relative group">
+                                            <div className="bg-white border border-slate-200 p-6 rounded-2xl group-hover:border-green-500/50 transition-all h-full shadow-sm hover:shadow-md">
+                                                <div className="text-[10px] font-black uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: primaryColor }}>
+                                                    <span className="w-4 h-px bg-current opacity-30"></span>
+                                                    Step 0{i+1}
+                                                </div>
+                                                <div className="text-lg font-bold mb-2 group-hover:text-green-700 transition-colors">{phase.name}</div>
+                                                <div className="text-sm text-slate-500 leading-relaxed">{phase.detail}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="max-w-7xl mx-auto px-6 py-24 fade-in">
+                            <div className="bg-[#1a1a1a] rounded-[3rem] p-12 md:p-16 text-white shadow-2xl">
+                                <div className="flex flex-col lg:flex-row gap-12 items-start lg:items-center">
+                                    <div className="lg:w-1/3 flex flex-col items-center lg:items-start text-center lg:text-left">
+                                        <div className="w-32 h-32 bg-green-500/10 border-2 border-green-500/20 rounded-[2.5rem] flex items-center justify-center mb-8">
+                                            <LucideIcon name="users" className="w-16 h-16 text-green-500" />
+                                        </div>
+                                        <h2 className="text-5xl font-extrabold leading-tight">Think like a mentor</h2>
+                                    </div>
+                                    <div className="lg:w-2/3 space-y-10">
+                                        <p className="text-3xl font-medium leading-relaxed italic opacity-90">
+                                            "Treat AI like a super smart intern who never gets tired but sometimes forgets the rules. It can do 90% of the work, but you're still the one in charge of the final result."
+                                        </p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                                                <LucideIcon name="shield-alert" className="w-8 h-8 mb-4 text-orange-500" />
+                                                <h4 className="text-xl font-bold mb-2">You're the boss</h4>
+                                                <p className="text-white/60 text-sm leading-relaxed">You bring the ideas and the intuition. The AI just helps you build them.</p>
+                                            </div>
+                                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] hover:bg-white/10 transition-colors">
+                                                <LucideIcon name="shield-check" className="w-8 h-8 mb-4 text-green-500" />
+                                                <h4 className="text-xl font-bold mb-2">Check the work</h4>
+                                                <p className="text-white/60 text-sm leading-relaxed">Always verify. Even the smartest AI has 'off' days where it gets stuff wrong.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+                    <footer className="bg-white border-t border-slate-200 py-16 px-6">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-slate-900">
+                            <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-all cursor-pointer">
+                                <div className="w-6 h-6 rounded bg-slate-900 flex items-center justify-center">
+                                    <LucideIcon name="rocket" className="text-white w-4 h-4" />
+                                </div>
+                                <span className="font-bold tracking-tight">Omnistrate AI Lab</span>
+                            </div>
+                            <nav className="flex gap-8 text-sm font-bold text-slate-400">
+                                <a href="#" className="hover:text-green-600 transition-colors">Playbook</a>
+                                <a href="#" className="hover:text-green-600 transition-colors">Docs</a>
+                                <a href="#" className="hover:text-green-600 transition-colors">Security</a>
+                            </nav>
+                            <div className="text-slate-400 text-xs font-medium">© {new Date().getFullYear()} Omnistrate. Built for Quality.</div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
